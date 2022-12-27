@@ -1,2 +1,0 @@
-2022-11-14 19:21:32.147 | INFO     | __main__:health_check:5 - Hi there, your service is up! version = 0.0.1
-2022-11-14 19:21:41.301 | INFO     | __main__:health_check:5 - Hi there, your service is up! version = 0.0.1
