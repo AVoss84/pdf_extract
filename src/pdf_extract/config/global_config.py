@@ -12,8 +12,8 @@ using = 'vm'                   # own virtual machine
 #-----------------------------------------------------------
 if using == 'vm':
     defaults = {
-            "UC_CODE_DIR": str(Path.home() / "Documents/GitHub/project_template/src"),       
-            "UC_DATA_DIR": "",          # external
+            "UC_CODE_DIR": (Path.home() / "Documents/GitHub/pdf_extract/src").__str__(),       
+            "UC_DATA_DIR": (Path.home() / "Documents/Arbeit/Allianz/AZVers/data").__str__(),          # external
             "UC_DATA_PKG_DIR": "",      # internal, i.e. data folder within package                  
             "UC_DB_CONNECTION": 'postgresql://postgres...', 
             "UC_PORT": "5000", 
