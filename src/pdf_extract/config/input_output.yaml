@@ -1,0 +1,42 @@
+input:
+    service:
+          CSVService:         
+              path: my_input_file.csv        # some input csv
+          XLSXService:         
+              path: my_input_file2.xlsx      # some input xls
+
+    schema_map:
+          categorical_cols:
+              Claim Reference: clm_no 
+              Line of Business Long Desc: clm_lob 
+              Sub Line of Business Desc: clm_sublob_orig 
+              Claimant Code: clmnt_code 
+              Participant Name Code: clm_prtcpnt_name_code 
+              Policy Number: pol_no 
+              Claim City: clm_city 
+              Claim Street: clm_street 
+              Claim Post Code: clm_postcode 
+              Claim Country: clm_country 
+          text_cols:
+              Claim Description: clm_desc 
+              Claim Status Description: clm_status_desc 
+              Cat. Code 1 Description: clm_cat1_desc 
+              Cat. Code 2 Description: clm_cat2_desc 
+              Cat. Code 3 Description: clm_cat3_desc 
+              Claim First Area Description: clm_first_area_desc 
+              Claim Second Area Description: clm_second_area_desc
+              Claim Third Area Description: clm_third_area_desc 
+          date_cols: 
+              Date of Loss: clm_dol 
+              Notification Date: clm_don 
+              Date Claim Closed: clm_doc 
+              Date of last Movement: clm_dolm 
+              Date last Seen: clm_dls 
+          numeric_cols:
+              Claim Amount EUR: clm_amt
+
+output:
+    service:
+          PickleService:
+              path: sub_clm_out.pkl       
+  
