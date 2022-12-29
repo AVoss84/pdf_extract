@@ -1,4 +1,4 @@
-import nltk, re, string, gensim, spacy        # for type hints
+import nltk, re, string, gensim, spacy, fasttext        # for type hints
 from string import punctuation
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer

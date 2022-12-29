@@ -14,7 +14,7 @@ dependencies:
     - spacy
     - nltk
     - scikit-learn
-  #   - fasttext==0.9.2
+    - fasttext
   #  # - pyLDAvis    # for topic visual.
   #  # - matplotlib==3.6.2
   #  # - importlib
