@@ -173,22 +173,22 @@ class TXTService:
         try:
             with open(self.path, **kwargs) as f:
                 df = f.read().splitlines()
-            #df = pd.read_csv(self.path, sep=" ", header=None, encoding = self.encoding, **kwargs)
+                #df = pd.read_csv(self.path, sep=" ", header=None, encoding = self.encoding, **kwargs)
             if self.verbose : print(f"TXT Service read from file: {str(self.path)}")    
         except Exception as e0:
             print(e0); df = None
         finally: 
             return df
         
-    def doWrite(self, X : List, **kwargs):
+    def doWrite(self, X : pd.DataFrame, **kwargs):
         """Write to TXT files.
         Args:
             X (List): Input data
         """
         try:
-            with open(self.path, 'w', **kwargs) as f:
-                f.write('\n'.join(X))
-            #X.to_csv(self.path, index=None, sep=' ', header=None, encoding = self.encoding, mode='w+', **kwargs)
+            #with open(self.path, 'w', **kwargs) as f:
+            #    f.write('\n'.join(X))
+            X.to_csv(self.path, index=None, sep=' ', header=None, mode='w+', **kwargs)
             if self.verbose : print(f"TXT Service output to file: {str(self.path)}")  
         except Exception as e0:
             print(e0)
