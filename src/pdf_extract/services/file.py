@@ -188,7 +188,7 @@ class TXTService:
         try:
             #with open(self.path, 'w', **kwargs) as f:
             #    f.write('\n'.join(X))
-            X.to_csv(self.path, index=None, sep=' ', header=None, mode='w+', **kwargs)
+            X.to_csv(self.path, index=None, sep="\t", header=None, mode='w+', **kwargs)   # sep=" "
             if self.verbose : print(f"TXT Service output to file: {str(self.path)}")  
         except Exception as e0:
             print(e0)

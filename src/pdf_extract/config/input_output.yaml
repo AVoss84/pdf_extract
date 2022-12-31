@@ -21,6 +21,8 @@ input:
 
 output:
     service:
-          TXTService:
+          TXTService1:
               path: train_data_fasttext.txt       
+          TXTService2:
+              path: test_data_fasttext.txt  
   
