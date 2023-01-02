@@ -25,4 +25,6 @@ output:
               path: train_data_fasttext.txt       
           TXTService2:
               path: test_data_fasttext.txt  
+          TXTService3:
+              path: dev_data_fasttext.txt  
   

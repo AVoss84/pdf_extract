@@ -3,7 +3,7 @@ Services for reading and writing from and to various file formats
 """
 import pandas as pd
 from imp import reload
-import os, yaml, json, toml
+import os, yaml, json, toml, pickle
 from typing import (Dict, List, Text, Optional, Any, Union)
 from pdf_extract.config import global_config as glob
 
@@ -83,38 +83,49 @@ class XLSXService:
 
 
 class PickleService:
-    def __init__(self, path : Optional[str] = "", root_path : str = glob.UC_DATA_DIR, schema_map : Optional[dict] = None, verbose : bool = False):
+    def __init__(self, path : Optional[str] = "", root_path : str = glob.UC_DATA_DIR, schema_map : Optional[dict] = None, is_df : bool = True, verbose : bool = True):
         """Generic read/write service for Pkl files
         Args:
             path (str, optional): Filename. Defaults to "".
+            is_df (bool): Is pandas dataframe or not?
             root_path (str, optional): root path where file is located. Defaults to glob.UC_DATA_DIR.
             schema_map (Optional[dict], optional): mapping scheme for renaming of columns, see pandas rename. Defaults to None.
-            verbose (bool, optional): should user information be displayed?. Defaults to False.
+            verbose (bool, optional): should user information be displayed?. Defaults to True.
         """
         self.path = os.path.join(root_path, path)
         self.schema_map = schema_map
         self.verbose=verbose
-
-    def doRead(self, **kwargs)-> pd.DataFrame:
+        self.is_df = is_df
+    
+    def doRead(self, **kwargs)->pd.DataFrame:
         """Read pkl files
         Returns:
             pd.DataFrame: input data
         """
-        df = pd.read_pickle(self.path, **kwargs)
-        if self.verbose : print(f"Pickle Service Read from file: {str(self.path)}")
-        if self.schema_map: df.rename(columns = self.schema_map, inplace = True)
-        return df
+        try:
+            if self.is_df:
+                data = pd.read_pickle(self.path, **kwargs)
+                if self.schema_map: self.df.rename(columns = self.schema_map, inplace = True)
+            else:
+                data = pickle.load(open(self.path, "rb"))
+            if self.verbose : print(f"Pickle Service Read from file: {str(self.path)}")
+            return data
+        except Exception as e:
+            print(e)
 
-    def doWrite(self, X: pd.DataFrame, **kwargs):
+    def doWrite(self, X):
         """Write to PKL file
         Args:
             X (pd.DataFrame): input data
         """
         try:
-            X.to_pickle(path = self.path, compression = None)    
-            if self.verbose : print(f"Pickle Service Output to File: {str(self.path)}")
-        except Exception as e0:
-            print(e0)
+            if self.is_df:
+                X.to_pickle(path = self.path, compression = None)        # "gzip"
+            else:
+                pickle.dump(X, open(self.path, "wb"))
+            if self.verbose : print(f"Pickle Service Read from file: {str(self.path)}")
+        except Exception as e:
+            print(e)
 
 
 class YAMLservice:
