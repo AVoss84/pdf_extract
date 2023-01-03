@@ -38,12 +38,12 @@ class clean_text(BaseEstimator, TransformerMixin):
         self.kwargs = kwargs
         self.stemming = stem
         self.lemma = lemma
+        self.language = language
         assert (self.lemma & self.stemming) != True, 'Use either lemmatization or stemming!'
-        self.stop_words = set(stopwords.words(language)) 
-        if self.verbose: print(f'Using {language} language.'); print(f'Using {len(self.stop_words)} stop words.') 
+        self.stop_words = set(stopwords.words(self.language)) 
+        if self.verbose: print(f'Using {self.language} language.'); print(f'Using {len(self.stop_words)} stop words.') 
         self.own_stopwords = file.TXTService(verbose=False, root_path=glob.UC_CODE_DIR + '/pdf_extract/config', path='stopwords_eng.txt').doRead()
         self.stop_words = self._add_stopwords(self.own_stopwords)
-
         if self.verbose: print(f'Adding custom stop words...') 
 
         if 'without_stopwords' in list(self.kwargs.keys()):
@@ -53,7 +53,7 @@ class clean_text(BaseEstimator, TransformerMixin):
             self.stop_words = self._add_stopwords(self.kwargs.get('with_stopwords', '')) 
             
         if self.stemming:
-            self.stemmer = SnowballStemmer(language); print("Loading nltk stemmer.")
+            self.stemmer = SnowballStemmer(self.language); print("Loading nltk stemmer.")
             
         if self.lemma:
             self.nlp = spacy.load('en_core_web_lg'); print("Loading spaCy embeddings for lemmatization.")
