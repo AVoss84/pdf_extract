@@ -62,7 +62,7 @@ conda activate env_pdf
 Install your package
 ```bash
 python -m spacy download en_core_web_lg
-#python -m spacy download de_core_news_lg      # install large Glove engl. word embeddings
+python -m spacy download de_core_news_lg      # install large Glove engl. word embeddings
 pip install -e src
 ``` 
 

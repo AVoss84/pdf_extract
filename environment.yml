@@ -15,6 +15,7 @@ dependencies:
     - nltk
     - scikit-learn
     - fasttext
+    - lime
   #  # - pyLDAvis    # for topic visual.
   #  # - matplotlib==3.6.2
   #  # - importlib
