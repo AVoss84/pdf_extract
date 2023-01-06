@@ -51,29 +51,22 @@ This is a blueprint of a generic end-to-end data science project, i.e. building 
 **Business impact KPI**: Faster STP (in hours/days)
 
 
-## Package installation and application develoment
+## Package installation
 
 Create conda virtual environment with required packages 
 ```bash
-conda create -n proj_templ python=3.8 -y
-conda activate proj_templ
+conda env create -f environment.yml 
+conda activate env_pdf
 ```
 
-To install the package locally execute the following steps:
-
+Install your package
 ```bash
-pip install -r requirements.txt         
-pip install -e src                     # install own package
-```
+python -m spacy download en_core_web_lg
+python -m spacy download de_core_news_lg      # install large Glove engl. word embeddings
+pip install -e src
+``` 
 
 Start application locally:
 ```bash
 uvicorn main:app --reload         # checkout Swagger docs: http://127.0.0.1:8000/docs 
-```
-
-Build image and run app in container:
-```bash                                 
-docker-compose up -d 
-```
-
- 
+``` 

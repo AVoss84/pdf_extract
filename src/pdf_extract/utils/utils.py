@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
-from typing import (Dict, List, Text, Optional, Any, Union)
-from my_package.config import config  
-from my_package.services import file 
+from typing import (Dict, List, Text, Optional, Any, Union, Tuple)
+from sklearn.model_selection import train_test_split
+from sklearn.base import BaseEstimator, TransformerMixin
+from pdf_extract.config import config  
+from pdf_extract.services import file 
 
 
 def set_formats(X: pd.DataFrame, 
@@ -33,6 +35,47 @@ def set_formats(X: pd.DataFrame,
     if verbose: print("Data formats have been set.")  
     return X 
 
+
+def train_test_split_extend(X: pd.DataFrame, y: Optional[pd.DataFrame]=None, test_size : List=[0.2, 0.1], **para)-> Tuple:
+    """Split dataset (X,y) into train, test, validation set.
+
+    Args:
+        X (pd.DataFrame): Design matrix with features in columns
+        y (Optional[pd.DataFrame], optional): In case of supervised learning task. Defaults to None.
+        test_size (List, optional): Proportion of test set size and optionally validation set. Defaults to [].
+
+    Returns:
+        tuple: X,y dataframes according to folds
+    """
+    assert len(test_size) in [1,2], 'Specify test set size and optionally followed by validation set size.'
+
+    if y is None: 
+        if len(test_size) == 2:
+          p_rest = round(sum(test_size),2) ; p_test = round(test_size[0]/p_rest,2) 
+          X_train, X_rest = train_test_split(X, test_size = p_rest, **para)
+          X_valid, X_test = train_test_split(X_rest, test_size=p_test, **para)
+          assert (X.shape[0] == X_train.shape[0] + X_valid.shape[0] + X_test.shape[0])
+          return X_train, X_valid, X_test
+
+        if len(test_size) == 1:
+          p_test = test_size[0]
+          X_train, X_test = train_test_split(X, test_size = p_test, **para)
+          assert (X.shape[0] == X_train.shape[0] + X_test.shape[0])
+          return X_train, X_test
+    else:    
+        if len(test_size) == 2:
+          p_rest = round(sum(test_size),2) ; p_test = round(test_size[0]/p_rest,2)
+          X_train, X_rest, y_train, y_rest = train_test_split(X, y, stratify = y, test_size = p_rest, **para)
+          X_valid, X_test, y_valid, y_test = train_test_split(X_rest, y_rest, stratify = y_rest, test_size=p_test, **para)
+          assert (X.shape[0] == X_train.shape[0] + X_valid.shape[0] + X_test.shape[0])
+          return X_train, X_valid, X_test, y_train, y_valid, y_test
+
+        if len(test_size) == 1:
+          p_test = test_size[0]   
+          X_train, X_test, y_train, y_test = train_test_split(X, y, stratify = y, test_size = p_test, **para)
+          assert (X.shape[0] == X_train.shape[0] + X_test.shape[0])
+          return X_train, X_test, y_train, y_test
+        
 
 if __name__ == "__main__":
     import doctest
