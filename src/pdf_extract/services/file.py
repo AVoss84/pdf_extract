@@ -166,7 +166,7 @@ class YAMLservice:
 
 
 class TXTService:
-    def __init__(self, path : Optional[str] = "", root_path : Optional[str] = glob.UC_DATA_DIR, verbose : bool = True):
+    def __init__(self, path : Optional[str] = "", root_path : Optional[str] = glob.UC_DATA_DIR, verbose : bool = False):
         """Generic read/write service for TXT-files
         Args:
             path (Optional[str], optional): Filename. Defaults to "".

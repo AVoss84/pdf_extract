@@ -39,7 +39,7 @@ class clean_text(BaseEstimator, TransformerMixin):
         self.stemming = stem
         self.lemma = lemma
         self.language = language
-        assert (self.lemma & self.stemming) != True, 'Use either lemmatization or stemming!'
+        assert (self.lemma and self.stemming) != True, 'Use either lemmatization or stemming!'
         self.stop_words = set(stopwords.words(self.language)) 
         if self.verbose: print(f'Using {self.language} language.'); print(f'Using {len(self.stop_words)} stop words.') 
         # English stopwords:
