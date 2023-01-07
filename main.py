@@ -2,14 +2,12 @@
 import sys, logging, uvicorn, os
 from loguru import logger
 from fastapi import FastAPI
+import pandas as pd
 from pydantic import BaseModel
-#from pydantic import BaseModel, conlist
-#from typing import List
+from typing import List
 from src.pdf_extract.config import global_config as glob
 from src.pdf_extract.services import pipelines as trained_pipelines
 from importlib import reload
-
-reload(trained_pipelines)
 
 
 logger.add(sys.stdout, format='{time} | {level: <8} | {name: ^15} | {function: ^15} | '
@@ -20,11 +18,20 @@ logger.add("logs/file_{time}.log")
 
 
 class my_payload(BaseModel):
-    text: str
-    #fname: str 
+    """Define payload schema.
+    Args:
+        BaseModel (_type_): _description_
+    """
+    text: List[str]
+    fname: List[str] 
 
 
 app = FastAPI(title="HR API", description="API for HR model", version="0.0.1")
+
+# @app.on_event('startup')
+# async def load_model():
+#     from src.pdf_extract.services import pipelines as trained_pipelines
+#     clf.trained_pipe = trained_pipelines.pipe
 
 @app.get("/")
 def health_check():
@@ -33,19 +40,18 @@ def health_check():
     return status
 
 
-@app.on_event('startup')
-async def load_model():
-    from src.pdf_extract.services import pipelines as trained_pipelines
-    pipe = trained_pipelines.pipe
-
-
 @app.post('/predict', tags=["predictions"])
 async def get_prediction(payload: my_payload):
-    data = dict(payload)['text']
-    prediction = trained_pipelines.pipe.predict(data).tolist()
-    proba = trained_pipelines.pipe.predict_proba(data).tolist()
-    return {"prediction": prediction,
-            "log_proba": proba}
+    """Prediction endpoint
+    Args:
+        payload (my_payload): _description_
+    Returns:
+        _type_: _description_
+    """
+    df = pd.DataFrame(payload.text, columns=['text'])
+    prediction = trained_pipelines.pipe.predict(df['text']).tolist()
+    proba = trained_pipelines.pipe.predict_proba(df['text'])[:,1].tolist()
+    return {"prediction": prediction, "proba": proba}
 
 
 if __name__ == "__main__":
