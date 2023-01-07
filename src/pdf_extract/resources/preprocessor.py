@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-print('This is the preprocessing module.')
-
-=======
 import nltk, re, string, gensim, spacy, fasttext        # for type hints
 from string import punctuation
 from nltk.corpus import stopwords
@@ -211,4 +207,3 @@ class clean_text(BaseEstimator, TransformerMixin):
         corpus = corpus.apply(self.untokenize)
         if self.verbose: print("Finished preprocessing!")
         return corpus #.to_frame(name="text") 
->>>>>>> 54aae2835bfafda7e1e1b51d20b030b08a5d3b29
