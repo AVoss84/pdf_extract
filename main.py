@@ -31,7 +31,6 @@ app = FastAPI(title="HR API", description="API for HR model", version="0.0.1")
 # @app.on_event('startup')
 # async def load_model():
 #     from src.pdf_extract.services import pipelines as trained_pipelines
-#     clf.trained_pipe = trained_pipelines.pipe
 
 @app.get("/")
 def health_check():
