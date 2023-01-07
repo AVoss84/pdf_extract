@@ -275,3 +275,45 @@ class TOMLservice:
                     if self.verbose: print(f"Write to: {self.root_path+self.path}")
                 except Exception as exc:
                     print(exc)
+
+
+class PDFService:
+    def __init__(self, path : Optional[str] = "", root_path : Optional[str] = glob.UC_DATA_DIR, verbose : bool = False):
+        """Generic read/write service for PDF files
+        Args:
+            path (Optional[str], optional): Filename. Defaults to "".
+            root_path (Optional[str], optional): root path where file is located. Defaults to glob.UC_DATA_DIR.
+            verbose (bool, optional): should user information be displayed?. Defaults to True.
+        """
+        self.path = os.path.join(root_path, path)
+        self.verbose = verbose
+
+    def doRead(self, **kwargs)-> List:
+        """Read PDF files
+        Returns:
+            List: Input data
+        """
+        try:
+            #df = pd.DataFrame(columns=['text', 'fname'])
+            i, page_objects, text = 0, {}, ""
+            with pdfplumber.open(self.path) as pdf:
+                    while i < len(pdf.pages):
+                        page = pdf.pages[i]
+                        #print(pdf.metadata)
+                        page_objects[str(i+1)] = page.extract_text(x_tolerance=1, y_tolerance=3) #.split('\n')
+                        text += page_objects[str(i+1)]
+                        i += 1
+            #df.loc[0] = [text,fname]
+            df = text
+            if self.verbose : print(f"PDF service read from file: {str(self.path)}")    
+        except Exception as e0:
+            print(e0); df = None
+        finally: 
+            return df
+        
+    def doWrite(self, X : pd.DataFrame, **kwargs):
+        """Write to PDF files.
+        Args:
+            X (List): Input data
+        """
+        pass
