@@ -27,8 +27,7 @@ def main():
 
     with header:
         tabs = st.tabs(["Data", "Predictions"])
-        tab_data = tabs[0]
-        tab_pred = tabs[1]
+        tab_data, tab_pred = tabs[0], tabs[1]
 
     with st.sidebar:
         st.image(os.path.join(glob.UC_CODE_DIR,'templates','agcs_banner.png'), use_column_width=True)
