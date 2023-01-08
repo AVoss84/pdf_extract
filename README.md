@@ -66,7 +66,12 @@ python -m spacy download de_core_news_lg      # install large Glove engl. word e
 pip install -e src
 ``` 
 
-Start application locally:
+Start REST API locally:
 ```bash
 uvicorn main:app --reload         # checkout Swagger docs: http://127.0.0.1:8000/docs 
+``` 
+
+Start streamlit app locally:
+```bash
+streamlit run stream_app.py     
 ``` 

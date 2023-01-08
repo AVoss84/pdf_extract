@@ -9,13 +9,11 @@ from src.pdf_extract.config import global_config as glob
 from src.pdf_extract.services import pipelines as trained_pipelines
 from importlib import reload
 
-
-logger.add(sys.stdout, format='{time} | {level: <8} | {name: ^15} | {function: ^15} | '
-                              '{line: >3} | {message}', level=logging.DEBUG, serialize=False)
-logger.add(sys.stderr, format='{time} | {level: <8} | {name: ^15} | {function: ^15} | '
-                              '{line: >3} | {message}', level=logging.ERROR, serialize=False)
-logger.add("logs/file_{time}.log")
-
+# logger.add(sys.stdout, format='{time} | {level: <8} | {name: ^15} | {function: ^15} | '
+#                               '{line: >3} | {message}', level=logging.DEBUG, serialize=False)
+# logger.add(sys.stderr, format='{time} | {level: <8} | {name: ^15} | {function: ^15} | '
+#                               '{line: >3} | {message}', level=logging.ERROR, serialize=False)
+# logger.add("logs/file_{time}.log")
 
 class my_payload(BaseModel):
     """Define payload schema.
@@ -31,6 +29,7 @@ app = FastAPI(title="HR API", description="API for HR model", version="0.0.1")
 # @app.on_event('startup')
 # async def load_model():
 #     from src.pdf_extract.services import pipelines as trained_pipelines
+
 
 @app.get("/")
 def health_check():
@@ -54,6 +53,6 @@ async def get_prediction(payload: my_payload):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=str(glob.UC_APP_CONNECTION), port=int(glob.UC_PORT))
+    uvicorn.run(app, host=str(glob.UC_APP_CONNECTION), port=int(glob.UC_PORT))    # change port for streamlit!
 
 # uvicorn main:app --reload 
