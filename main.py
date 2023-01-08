@@ -50,7 +50,7 @@ async def get_prediction(payload: my_payload):
     df = pd.DataFrame(payload.text, columns=['text'])
     prediction = trained_pipelines.pipe.predict(df['text']).tolist()
     proba = trained_pipelines.pipe.predict_proba(df['text'])[:,1].tolist()
-    return {"prediction": prediction, "proba": proba}
+    return {"prediction": prediction, "proba of pos.": proba, 'fname': payload.fname}
 
 
 if __name__ == "__main__":
