@@ -55,4 +55,4 @@ async def get_prediction(payload: my_payload):
 if __name__ == "__main__":
     uvicorn.run(app, host=str(glob.UC_APP_CONNECTION), port=int(glob.UC_PORT))    # change port for streamlit!
 
-# uvicorn main:app --reload 
+# uvicorn main:app --reload --port 5000

@@ -78,15 +78,13 @@ def train_test_split_extend(X: pd.DataFrame, y: Optional[pd.DataFrame]=None, tes
           return X_train, X_test, y_train, y_test
         
 
-
-def extract_pdf_data(feed)-> pd.DataFrame:
+def extract_pdf_data(feed)-> Tuple[str, str]:
     """Extract data from pdf
     Args:
         feed (_type_): _description_
     Returns:
-        pd.DataFrame: raw data
+        string: raw text data
     """
-    df = pd.DataFrame(columns=['text', "fname"])
     i, page_objects, text = 0, {}, ""
     with pdfplumber.open(feed) as pdf:
         while i < len(pdf.pages):
@@ -94,8 +92,7 @@ def extract_pdf_data(feed)-> pd.DataFrame:
             page_objects[str(i+1)] = page.extract_text(x_tolerance=1, y_tolerance=3) #.split('\n')
             text += page_objects[str(i+1)]
             i += 1
-    df.loc[0] = [text, pdf.stream.name]
-    return df
+    return text, pdf.stream.name
 
 
 if __name__ == "__main__":

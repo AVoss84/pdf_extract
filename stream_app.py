@@ -24,46 +24,60 @@ st.set_page_config(page_title='Anomaly Report Creator', page_icon=img, layout="w
 def main():
 
     header = st.container()
-    
+
     with header:
-        tabs = st.tabs(["Data"])
+        tabs = st.tabs(["Data", "Predictions"])
         tab_data = tabs[0]
+        tab_pred = tabs[1]
 
     with st.sidebar:
         st.image(os.path.join(glob.UC_CODE_DIR,'templates','agcs_banner.png'), use_column_width=True)
-        uploaded_file = st.file_uploader("Upload file:", type = ["pdf"])    # returns byte object
+        path = st.file_uploader("Upload file(s):", type = ["pdf"], accept_multiple_files=True)    # returns byte object
 
-    data_orig, my_resp = None, None
-    if uploaded_file is not None:
+    data_orig, my_resp, df_resp = None, None, None
+    if path is not None:
         try:
-            data_orig = utils.extract_pdf_data(uploaded_file)
-            body = {"text": data_orig.text.tolist(), "fname" : data_orig.fname.tolist()}
+            query = pd.DataFrame(columns=['File name','Text'])
+            for z, uploaded_file in enumerate(path):
+                text, fname = utils.extract_pdf_data(uploaded_file)
+                query.loc[z] = [fname, text]
+
+            # Prepare body for http POST request
+            body = {"text": query['Text'].tolist(), "fname" : query['File name'].tolist()}
 
             with tab_data:
                 dataset = st.expander(label = "Display raw text")
                 with dataset:            
-                    st.table(data_orig)
+                    st.table(query)
 
         except Exception as ex:
             st.error("Invalid File"); print(ex)
 
         with st.sidebar:
-            #submitted = st.button('Run analysis', key='my_button', on_click = widget_callback)    # boolean 
             st.text(" ")
             if st.button('Get model decision', key='predict'):    # no callback needed here
-                response = requests.post(f"http://{glob.UC_APP_CONNECTION}:{glob.UC_PORT}/predict", json=body)
-                print(response)
-                my_resp = response.json()
+                try:
+                    response = requests.post(f"http://{glob.UC_APP_CONNECTION}:{glob.UC_PORT}/predict", json=body)
+                    print(response)
+                    my_resp = response.json()
+                    df_resp = pd.DataFrame(my_resp).sort_values(by="proba of pos.", ascending=False)
+                    df_resp.rename(columns={'prediction': 'Prediction', 'proba of pos.' : 'Probability of positive', 'fname': 'File name'}, inplace=True)
+                except Exception as ex:
+                    print(ex)
 
         if my_resp is not None:
             with tab_data:
-                st.success(f"Model prediction: {my_resp['prediction'][0]} ({np.round(my_resp['proba of pos.'][0], 3)})")
+                st.success(f"Check model predictions.")
                 print(my_resp)
                     
+            with tab_pred:
+                m_out = st.expander(label = "Display model output")
+                with m_out:            
+                    st.table(df_resp)
 
 ###########
 # Run app:
 ###########
 main()
 
-
+# streamlit run stream_app.py

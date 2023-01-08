@@ -68,7 +68,7 @@ pip install -e src
 
 Start REST API locally:
 ```bash
-uvicorn main:app --reload         # checkout Swagger docs: http://127.0.0.1:8000/docs 
+uvicorn main:app --reload         # checkout Swagger docs: http://127.0.0.1:5000/docs 
 ``` 
 
 Start streamlit app locally:
