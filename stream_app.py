@@ -6,8 +6,8 @@ import glob as gl
 from PIL import Image
 import os, warnings
 warnings.filterwarnings("ignore")
-from pdf_extract.config import global_config as glob
-from pdf_extract.utils import utils
+from src.pdf_extract.config import global_config as glob
+from src.pdf_extract.utils import utils
 
 #--------------------------------------------------------
 # Set Page name and icon, Layout and sidebar expanded
