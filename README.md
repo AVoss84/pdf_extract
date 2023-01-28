@@ -1,4 +1,4 @@
-# Information extraction from Pdf files
+# Text classification based on PDF input data
 
 This is a blueprint of a generic end-to-end data science project, i.e. building a Python package along the usual steps: data preprocessing, model training, prediction, postprocessing, REST API construction (for real-time model serving) and containerization for final deployment as a microservice.
 
@@ -39,16 +39,6 @@ This is a blueprint of a generic end-to-end data science project, i.e. building 
     ├── notebooks
     └── setup.py
 ```
-
-## Use Case description
-
-**Business goal**: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-
-**Business stakeholders**: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-**Input data description**: Iris data set
-
-**Business impact KPI**: Faster STP (in hours/days)
 
 
 ## Package installation
