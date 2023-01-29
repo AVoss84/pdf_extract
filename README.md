@@ -5,39 +5,26 @@ This is a blueprint of a generic end-to-end data science project, i.e. building 
 ## Package structure
 
 ```
-├── docker-compose.yaml
-├── Dockerfile
+.
+├── environment.yml
 ├── logs
-├── main.py                               # REST API definition 
+├── main.py
 ├── README.md
 ├── requirements.txt
-└── src
-    ├── __init__.py
-    ├── my_package
-    │   ├── config
-    │   │   ├── config.py
-    │   │   ├── global_config.py          # user environemntal variables
-    │   │   ├── __init__.py
-    │   │   └── input_output.yaml         # structure reading and writing of files
-    │   ├── data                          # temporary data dump (will be git ignored)
-    │   ├── resources
-    │   │   ├── __init__.py
-    │   │   ├── postprocessor.py
-    │   │   ├── predictor.py
-    │   │   ├── preprocessor.py
-    │   │   ├── README.md
-    │   │   └── trainer.py
-    │   ├── services
-    │   │   ├── file.py
-    │   │   ├── __init__.py
-    │   │   ├── pipelines.py
-    │   │   ├── publisher.py
-    │   │   └── README.md
-    │   └── utils
-    │       ├── __init__.py
-    │       └── utils.py
-    ├── notebooks
-    └── setup.py
+├── src
+│   ├── __init__.py
+│   ├── notebooks
+│   │   ├── fasttext_classifier.ipynb
+│   │   └── naivebayes_classifier.ipynb
+│   ├── pdf_extract
+│   │   ├── config
+│   │   ├── data
+│   │   ├── resources
+│   │   ├── services
+│   │   └── utils
+│   ├── setup.py
+│   └── templates
+└── stream_app.py
 ```
 
 
