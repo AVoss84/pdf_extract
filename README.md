@@ -1,54 +1,29 @@
-# Information extraction from Pdf files
-
-This is a blueprint of a generic end-to-end data science project, i.e. building a Python package along the usual steps: data preprocessing, model training, prediction, postprocessing, REST API construction (for real-time model serving) and containerization for final deployment as a microservice.
+# Text classification based on PDF input data
 
 ## Package structure
 
 ```
-├── docker-compose.yaml
-├── Dockerfile
+.
+├── environment.yml
 ├── logs
-├── main.py                               # REST API definition 
+├── main.py
 ├── README.md
 ├── requirements.txt
-└── src
-    ├── __init__.py
-    ├── my_package
-    │   ├── config
-    │   │   ├── config.py
-    │   │   ├── global_config.py          # user environemntal variables
-    │   │   ├── __init__.py
-    │   │   └── input_output.yaml         # structure reading and writing of files
-    │   ├── data                          # temporary data dump (will be git ignored)
-    │   ├── resources
-    │   │   ├── __init__.py
-    │   │   ├── postprocessor.py
-    │   │   ├── predictor.py
-    │   │   ├── preprocessor.py
-    │   │   ├── README.md
-    │   │   └── trainer.py
-    │   ├── services
-    │   │   ├── file.py
-    │   │   ├── __init__.py
-    │   │   ├── pipelines.py
-    │   │   ├── publisher.py
-    │   │   └── README.md
-    │   └── utils
-    │       ├── __init__.py
-    │       └── utils.py
-    ├── notebooks
-    └── setup.py
+├── src
+│   ├── __init__.py
+│   ├── notebooks
+│   │   ├── fasttext_classifier.ipynb
+│   │   └── naivebayes_classifier.ipynb
+│   ├── pdf_extract
+│   │   ├── config
+│   │   ├── data
+│   │   ├── resources
+│   │   ├── services
+│   │   └── utils
+│   ├── setup.py
+│   └── templates
+└── stream_app.py
 ```
-
-## Use Case description
-
-**Business goal**: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-
-**Business stakeholders**: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-**Input data description**: Iris data set
-
-**Business impact KPI**: Faster STP (in hours/days)
 
 
 ## Package installation
@@ -66,7 +41,12 @@ python -m spacy download de_core_news_lg      # install large Glove engl. word e
 pip install -e src
 ``` 
 
-Start application locally:
+Start REST API locally:
 ```bash
-uvicorn main:app --reload         # checkout Swagger docs: http://127.0.0.1:8000/docs 
+uvicorn main:app --reload --port 5000         # checkout Swagger docs: http://127.0.0.1:5000/docs 
+``` 
+
+Start streamlit app locally:
+```bash
+streamlit run stream_app.py     
 ``` 

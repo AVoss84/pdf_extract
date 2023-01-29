@@ -13,6 +13,7 @@ dependencies:
     - spacy
     - nltk
     - scikit-learn
+    #- scikit-plot       # roc curve
     - fasttext
     - lime
     - loguru

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pdfplumber
 from typing import (Dict, List, Text, Optional, Any, Union, Tuple)
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -76,6 +77,23 @@ def train_test_split_extend(X: pd.DataFrame, y: Optional[pd.DataFrame]=None, tes
           assert (X.shape[0] == X_train.shape[0] + X_test.shape[0])
           return X_train, X_test, y_train, y_test
         
+
+def extract_pdf_data(feed)-> Tuple[str, str]:
+    """Extract data from pdf
+    Args:
+        feed (_type_): _description_
+    Returns:
+        string: raw text data
+    """
+    i, page_objects, text = 0, {}, ""
+    with pdfplumber.open(feed) as pdf:
+        while i < len(pdf.pages):
+            page = pdf.pages[i]
+            page_objects[str(i+1)] = page.extract_text(x_tolerance=1, y_tolerance=3) #.split('\n')
+            text += page_objects[str(i+1)]
+            i += 1
+    return text, pdf.stream.name
+
 
 if __name__ == "__main__":
     import doctest

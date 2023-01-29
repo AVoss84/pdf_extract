@@ -3,7 +3,7 @@ Services for reading and writing from and to various file formats
 """
 import pandas as pd
 from imp import reload
-import os, yaml, json, toml, pickle
+import os, yaml, json, toml, pickle, pdfplumber
 from typing import (Dict, List, Text, Optional, Any, Union)
 from pdf_extract.config import global_config as glob
 
@@ -279,7 +279,7 @@ class TOMLservice:
 
 class PDFService:
     def __init__(self, path : Optional[str] = "", root_path : Optional[str] = glob.UC_DATA_DIR, verbose : bool = False):
-        """Generic read/write service for PDF files
+        """Generic read/write service for PDF files from disc
         Args:
             path (Optional[str], optional): Filename. Defaults to "".
             root_path (Optional[str], optional): root path where file is located. Defaults to glob.UC_DATA_DIR.
@@ -303,7 +303,7 @@ class PDFService:
                         page_objects[str(i+1)] = page.extract_text(x_tolerance=1, y_tolerance=3) #.split('\n')
                         text += page_objects[str(i+1)]
                         i += 1
-            #df.loc[0] = [text,fname]
+            #df.loc[0] = [text, pdf.stream.name]
             df = text
             if self.verbose : print(f"PDF service read from file: {str(self.path)}")    
         except Exception as e0:
