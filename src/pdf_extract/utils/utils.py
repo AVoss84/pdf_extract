@@ -3,7 +3,11 @@ import pandas as pd
 import pdfplumber
 from typing import (Dict, List, Text, Optional, Any, Union, Tuple)
 from sklearn.model_selection import train_test_split
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin, ClassifierMixin
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer
+from copy import deepcopy
 from pdf_extract.config import config  
 from pdf_extract.services import file 
 
@@ -93,6 +97,155 @@ def extract_pdf_data(feed)-> Tuple[str, str]:
             text += page_objects[str(i+1)]
             i += 1
     return text, pdf.stream.name
+
+
+
+class naiveBayes(BaseEstimator, ClassifierMixin):
+    
+    def __init__(self, eps = 1e-7, verbose = True, alpha = 1, beta0 = 1, beta1 = 1):
+        self.verbose = verbose
+        self.eps = eps     # not needed if you use bayesian version -> Laplace smooting
+        self.alpha = alpha
+        if verbose : print('-- Bernoulli Naive Bayes (via ML estimation)--')
+
+    def logsumexp(self, x):
+        """Log-Sum-Exp Trick"""
+        c = x.max()
+        return c + np.log(np.sum(np.exp(x - c)))
+            
+        
+    def fit(self, X: np.array, y : np.array):
+            """
+            Input:
+                corpus: a list of training documents
+                labels: an m x 1 array with label of each document (e.g. claim descr.)
+            
+            # Example:
+            >>> corpus = np.array([['I', 'like', 'cats'], ['I', 'like', 'dogs'], ['What', 'do', 'you'], ['I', 'like', 'cats']])
+            >>> labels = np.array([2,6, 2, 2])
+            >>> nb = utils.naiveBayes()
+            -- Bernoulli Naive Bayes (via ML estimation)--
+            >>> class_prior_prob, class_cond_prob = nb.fit(corpus, labels)
+            Creating (token, label) -> frequency mappings for documents in corpus...
+            >>> class_cond_prob
+                        2    6
+            you   0.333333  0.0
+            What  0.333333  0.0
+            dogs  0.000000  1.0
+            do    0.333333  0.0
+            like  0.666667  1.0
+            cats  0.666667  0.0
+            I     0.666667  1.0
+            """
+            corpus = deepcopy(X) ; labels = deepcopy(y)
+            if self.verbose : print('Creating (token, label) -> frequency mappings for documents in corpus...')        
+            N = corpus.shape[0] ; self.vocab, tokenized_corpus = set(),[]
+            
+            # Create vocab.:
+            for i in corpus.tolist(): self.vocab.update(i)     # set will ignore existing tokens
+            # Calculate class prior probab.    
+            class_vals, self.N_c = np.unique(labels, return_counts=True)
+            self.joint_distr = pd.DataFrame(0,index=list(self.vocab), columns=[str(i) for i in set(labels)])
+            self.alphas = np.ones(len(class_vals))*self.alpha     # Dirichlet prior para
+            alpha0 = sum(self.alphas)
+            for z, (y, sentence) in enumerate(zip(labels, corpus)):
+                #tokens = word_tokenize(sentence)
+                #tokens = sentence.tolist()[0]
+                #for word in tokens:
+                for word in sentence:
+                    self.joint_distr.loc[str(word),str(y)] += 1
+
+            class_prior_prob = self.N_c / N        
+            class_cond_prob = self.joint_distr.values / self.N_c
+            class_prior_prob = pd.Series(class_prior_prob + self.eps, index=[str(i) for i in class_vals])
+            class_cond_prob = pd.DataFrame(class_cond_prob, index=self.joint_distr.index, columns=self.joint_distr.columns)
+            self.log_pd_theta = np.log(class_cond_prob + self.eps)
+            self.log_pd_theta_compl = np.log(1 - class_cond_prob + self.eps)
+            self.log_class_prior_prob = np.log(class_prior_prob)
+            return class_prior_prob, class_cond_prob
+
+        
+    def predict(self, X: np.array): 
+            """
+            Predict: Calculate posterior predictive distribution and calculate MAP estimate
+            see for example: Murphy, ML-a probab. perspective, eqn (3.66)
+            """
+            lpost = np.zeros((X.shape[0], len(self.log_pd_theta.columns)))
+            corpus = deepcopy(X)
+            for i, sentence in enumerate(corpus):
+                for z, c in enumerate(self.log_pd_theta.columns):
+                    lp = self.log_class_prior_prob[str(c)]
+                    for j in self.vocab:
+                        if j in sentence: 
+                            lp = lp + self.log_pd_theta.loc[str(j), str(c)]
+                        else:
+                            lp = lp + self.log_pd_theta_compl.loc[str(j), str(c)]
+                    lpost[i,z] = lp
+
+            post = np.exp(lpost - self.logsumexp(lpost))
+            yhat = np.argmax(lpost, axis=1)
+            return lpost, yhat
+
+
+class make_nb_feat(BaseEstimator, TransformerMixin):
+  """
+  Create Naive Bayes like document embeddings
+  """
+  def __init__(self, verbose : bool = True, **vect_param):
+      """
+      Example:
+      #--------
+      >>> corpus = np.array(['I like cats', 'I like dogs', 'What do you like?', 'This is fun!!!'])
+      >>> y = np.array([2,6, 2, 2])
+      >>> nb = utils.make_nb_feat().fit_transform(corpus,y)
+      -- Creating Naive Bayes like document embeddings --
+      >>> nb
+           level2    level6
+      0 -1.021651 -1.504077
+      1 -2.120264 -0.810930
+      2 -2.748872 -3.295837
+      3 -1.021651 -1.504077
+      """  
+      self.verbose = verbose  
+      if self.verbose : print('-- Creating Naive Bayes like document embeddings --')  
+            
+      self.pipeline = Pipeline([
+               #('cleaner', utils.clean_text(verbose=False)),
+               ('vectorizer', CountVectorizer(lowercase=True, #ngram_range=(2, 2),
+                                   token_pattern = '(?u)(?:(?!\d)\w)+\\w+', 
+                                    analyzer = 'word',  #char_wb
+                                    tokenizer = None, 
+                                    stop_words = None, #"english"
+                                    **vect_param          
+                                    )),  
+               ('model', BernoulliNB(alpha=1))
+            ])
+
+  def fit(self, X, y):
+        
+      self.pipeline.fit(X, y)
+      self.pipeline.named_steps['vectorizer'].get_stop_words()
+      self.vocab_ = self.pipeline.named_steps['vectorizer'].get_feature_names_out()
+      self.vectorizer = self.pipeline.named_steps['vectorizer']
+      self.model = self.pipeline.named_steps['model']
+      dt = self.vectorizer.transform(X)   # train set
+      self.doc_term_mat_train = dt.toarray()
+      self.log_cond_distr_train = pd.DataFrame(self.model.feature_log_prob_, index=[str(i) for i in self.model.classes_], columns=self.vocab_)
+      self.joint_abs_freq_train = pd.DataFrame(self.model.feature_count_, index=[str(i) for i in self.model.classes_], columns=self.vocab_)
+      return self
+
+  def transform(self, X):
+
+      dt = self.vectorizer.transform(X)
+      self.doc_term_mat = dt.toarray()
+      features_class = pd.DataFrame()
+      for c in self.model.classes_:
+            # log class cond. prob
+            feat_c = np.sum(self.doc_term_mat * self.log_cond_distr_train.loc[str(c),:].values, axis = 1)   # broadcast
+            # Joint abs. freq
+            #feat_c = np.sum(self.doc_term_mat * self.joint_abs_freq_train.loc[str(c),:].values, axis = 1)   # broadcast
+            features_class['level'+str(c)] = feat_c
+      return features_class 
 
 
 if __name__ == "__main__":
