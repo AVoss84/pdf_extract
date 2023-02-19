@@ -7,6 +7,7 @@ from spacy.cli.train import train as train_model
 from typing import (Dict, List, Text, Optional, Any, Union, Set, Tuple, Callable)
 from sklearn.base import BaseEstimator, ClassifierMixin
 from tqdm import tqdm
+#import configparser
 from pdf_extract.config import global_config as glob
 
 
