@@ -100,7 +100,8 @@ class spacy_classifier(BaseEstimator, ClassifierMixin):
 
     def _fill_config_file(self, base_config_file_name : str = "base_config.cfg", config_file_name : str = "config.cfg"):
         """Fill train config file from base config file. 
-        You can create a base config e.g. using spaCy's GUI: https://spacy.io/usage/training#quickstart
+           You can create a base config e.g. using spaCy's GUI: 
+           https://spacy.io/usage/training#quickstart
 
         Args:
             base_config_file_name (str, optional): _description_. Defaults to "base_config.cfg".
