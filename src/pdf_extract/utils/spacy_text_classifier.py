@@ -113,3 +113,4 @@ class spacy_classifier(BaseEstimator, ClassifierMixin):
         process = subprocess.Popen(cmd_init.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout_cmd, stderr_cmd = process.communicate()
         if self.verbose : print(stdout_cmd.decode("utf-8"))     # convert bytes to string for nicer printing 
+            
