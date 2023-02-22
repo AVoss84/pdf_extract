@@ -8,6 +8,7 @@ dependencies:
   # - pyg
   - pip:
     - pdfplumber==0.7.6
+    - pandas
     - spacy
     - nltk
     - scikit-learn
