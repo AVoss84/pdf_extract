@@ -12,6 +12,7 @@ dependencies:
     - spacy
     - nltk
     - scikit-learn
+    #- https://github.com/explosion/spacy-models/releases/download/de-core-news-lg-3.5.0/de-core-news-lg-3.5.0.tar.gz
     #- scikit-plot       # roc curve
     - fasttext
     - lime
