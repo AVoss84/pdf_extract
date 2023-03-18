@@ -1,4 +1,4 @@
-from typing import (Any, Callable)
+from typing import Callable
 import os, subprocess, spacy
 from spacy.tokens import DocBin
 from spacy.cli.train import train as train_model
@@ -24,7 +24,7 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
             return f"SpacyClassifier(verbose = {self.verbose})"
     
 
-    def fit(self, X: np.array = None, y : np.array = None, **params)-> Any:
+    def fit(self, X: np.array = None, y : np.array = None, **params)-> 'SpacyClassifier':
         
         # In case config file has not been filled - do it now:
         #------------------------------------------------------
@@ -46,9 +46,9 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
             # Finally use best model fit
             #----------------------------
             self.trained_nlp_ = spacy.load(f"{glob.UC_DATA_DIR}/output/model-best")    
-            return self
         except Exception as ex:
-            print(ex); return False
+            print(ex)
+        return self
 
     
     def predict_proba(self, X: np.array)-> np.array:
