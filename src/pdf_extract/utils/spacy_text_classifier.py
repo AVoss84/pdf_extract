@@ -1,30 +1,35 @@
-import pandas as pd
-import numpy as np
-from imp import reload
+from typing import (Any, Callable)
 import os, subprocess, spacy
 from spacy.tokens import DocBin
 from spacy.cli.train import train as train_model
-from typing import (Dict, List, Text, Optional, Any, Union, Set, Tuple, Callable)
+import pandas as pd
+import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from tqdm import tqdm
 #import configparser
 from pdf_extract.config import global_config as glob
+#from imp import reload
 
-
-class spacy_classifier(BaseEstimator, ClassifierMixin):
+class SpacyClassifier(BaseEstimator, ClassifierMixin):
     """
     Train spaCy text classifier from scratch.
     """ 
     def __init__(self, verbose : bool = True):
         self.verbose = verbose
         self.nlp = spacy.load("de_core_news_lg") 
-        if self.verbose: print(f"Pretrained spaCy model loaded.")
+        if self.verbose: 
+            print(f"Pretrained spaCy model loaded.")
     
+    def __repr__(self):
+            return f"SpacyClassifier(verbose = {self.verbose})"
+    
+
     def fit(self, X: np.array = None, y : np.array = None, **params)-> Any:
         
         # In case config file has not been filled - do it now:
         #------------------------------------------------------
-        if not hasattr(self, "config_file_name"): self._fill_config_file()
+        if not hasattr(self, "config_file_name"): 
+            self._fill_config_file()
         
         # Fit model based on config settings:
         #--------------------------------------
@@ -35,7 +40,8 @@ class spacy_classifier(BaseEstimator, ClassifierMixin):
                 overrides={"paths.train": f"{glob.UC_DATA_DIR}/train.spacy",
                            "paths.dev": f"{glob.UC_DATA_DIR}/valid.spacy"}, **params
                 )
-            if self.verbose: print("\nTraining done!")
+            if self.verbose: 
+                print("\nTraining done!")
             
             # Finally use best model fit
             #----------------------------
@@ -94,7 +100,8 @@ class spacy_classifier(BaseEstimator, ClassifierMixin):
             docs.add(doc)
         if save2disc: 
             docs.to_disk(os.path.join(glob.UC_DATA_DIR, target_file))
-            if self.verbose : print(os.path.join(glob.UC_DATA_DIR, target_file))
+            if self.verbose : 
+                print(os.path.join(glob.UC_DATA_DIR, target_file))
         return docs
 
 
@@ -108,8 +115,11 @@ class spacy_classifier(BaseEstimator, ClassifierMixin):
             config_file_name (str, optional): _description_. Defaults to "config.cfg".
         """
         self.config_file_name = config_file_name
-        if self.verbose: print(f"Using {base_config_file_name} as base template.")
+        if self.verbose: 
+            print(f"Using {base_config_file_name} as base template.")
+
         cmd_init = 'python -m spacy init fill-config {}/{} {}/{}'.format(glob.UC_DATA_DIR, base_config_file_name, glob.UC_DATA_DIR, self.config_file_name)
         process = subprocess.Popen(cmd_init.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        stdout_cmd, stderr_cmd = process.communicate()
-        if self.verbose : print(stdout_cmd.decode("utf-8"))     # convert bytes to string for nicer printing 
+        stdout_cmd, _ = process.communicate()
+        if self.verbose : 
+            print(stdout_cmd.decode("utf-8"))     # convert bytes to string for nicer printing 
