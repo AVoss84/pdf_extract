@@ -1,3 +1,4 @@
 {
-    "python.defaultInterpreterPath": "~/anaconda3/envs/env_pdf/bin/python"
+    // "python.defaultInterpreterPath": "~/anaconda3/envs/env_pdf/bin/python"
+    "python.defaultInterpreterPath": "C:\\Users\\Alexander\\miniforge3\\envs\\myenv\\bin\\python"
 }

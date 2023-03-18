@@ -2,26 +2,20 @@ name: env_pdf
 dependencies:
   - python=3.8
   - pip
-  # - xlrd
-  # - openpyxl
   - gensim
-  #- jupyter    # for use in Jupyter notebook
+  - jupyter    # for use in Jupyter notebook
   - ipykernel   # for recognition of conda env in Jupyter notebook
   # - pyg
   - pip:
     - pdfplumber==0.7.6
+    - pandas
     - spacy
     - nltk
     - scikit-learn
+    #- https://github.com/explosion/spacy-models/releases/download/de-core-news-lg-3.5.0/de-core-news-lg-3.5.0.tar.gz
     #- scikit-plot       # roc curve
     - fasttext
     - lime
-    - loguru
-    - fastapi
-    - uvicorn
-  #  # - pyLDAvis    # for topic visual.
-  #  # - matplotlib==3.6.2
-  #  # - importlib
-  #   - annoy
-  #  # - sentence_transformers
-  #   - networkx
+    #- loguru
+    #- fastapi
+    #- uvicorn
