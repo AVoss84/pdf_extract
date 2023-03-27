@@ -19,6 +19,7 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
         self.verbose = verbose
         self.spacy_model_name = spacy_model_name
         self._load_spacy()
+        #self.stopwords = self.nlp.Defaults.stop_words
         if self.verbose: 
             print(f"Pretrained spaCy model loaded.")
     
