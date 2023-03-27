@@ -15,6 +15,7 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
     Train spaCy text classifier from scratch.
     """ 
     def __init__(self, verbose : bool = True):
+        super(SpacyClassifier, self).__init__()
         self.verbose = verbose
         self.nlp = spacy.load("de_core_news_lg") 
         if self.verbose: 
