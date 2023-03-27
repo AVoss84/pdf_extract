@@ -18,7 +18,6 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
         super(SpacyClassifier, self).__init__()
         self.verbose = verbose
         self.spacy_model_name = spacy_model_name
-        #self.nlp = spacy.load("de_core_news_lg")
         self._load_spacy()
         if self.verbose: 
             print(f"Pretrained spaCy model loaded.")
