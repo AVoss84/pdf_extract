@@ -14,15 +14,20 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
     """
     Train spaCy text classifier from scratch.
     """ 
-    def __init__(self, verbose : bool = True):
+    def __init__(self, spacy_model_name: str = "de_core_news_lg", verbose : bool = True):
+        super(SpacyClassifier, self).__init__()
         self.verbose = verbose
-        self.nlp = spacy.load("de_core_news_lg") 
+        self.spacy_model_name = spacy_model_name
+        self._load_spacy()
+        #self.stopwords = self.nlp.Defaults.stop_words
         if self.verbose: 
             print(f"Pretrained spaCy model loaded.")
     
     def __repr__(self):
-            return f"SpacyClassifier(verbose = {self.verbose})"
+        return f"SpacyClassifier(verbose = {self.verbose})"
     
+    def _load_spacy(self):
+        self.nlp = spacy.load(self.spacy_model_name)
 
     def fit(self, X: np.array = None, y : np.array = None, **params)-> 'SpacyClassifier':
         
