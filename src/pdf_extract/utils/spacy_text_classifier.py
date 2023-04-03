@@ -7,8 +7,9 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from tqdm import tqdm
 #import configparser
-from pdf_extract.config import global_config as glob
+from hr_analytics.config import global_config as glob
 #from imp import reload
+
 
 class SpacyClassifier(BaseEstimator, ClassifierMixin):
     """
@@ -35,22 +36,23 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
         #------------------------------------------------------
         if not hasattr(self, "config_file_name"): 
             self._fill_config_file()
-        
+            
+        #--------------------------------------        
         # Fit model based on config settings:
         #--------------------------------------
         try:
             train_model(
-                config_path = f"{glob.UC_DATA_DIR}/{self.config_file_name}",
+                config_path = f"{self.config_dir}/{self.config_file_name}",
                 output_path = f"{glob.UC_DATA_DIR}/output",
                 overrides={"paths.train": f"{glob.UC_DATA_DIR}/train.spacy",
-                           "paths.dev": f"{glob.UC_DATA_DIR}/valid.spacy"}, **params
-                )
+                           "paths.dev": f"{glob.UC_DATA_DIR}/valid.spacy"}, **params)
             if self.verbose: 
                 print("\nTraining done!")
             
             # Finally use best model fit
             #----------------------------
             self.trained_nlp_ = spacy.load(f"{glob.UC_DATA_DIR}/output/model-best")    
+            
         except Exception as ex:
             print(ex)
         return self
@@ -110,20 +112,24 @@ class SpacyClassifier(BaseEstimator, ClassifierMixin):
         return docs
 
 
-    def _fill_config_file(self, base_config_file_name : str = "base_config.cfg", config_file_name : str = "config.cfg"):
+    def _fill_config_file(self, base_config_file_name : str = "base_config.cfg", config_file_name : str = "config.cfg", 
+                          config_dir : str = os.path.join(glob.UC_CODE_DIR, 'hr_analytics/config')):
+        
         """Fill train config file from base config file. 
            You can create a base config e.g. using spaCy's GUI: 
            https://spacy.io/usage/training#quickstart
 
         Args:
-            base_config_file_name (str, optional): _description_. Defaults to "base_config.cfg".
-            config_file_name (str, optional): _description_. Defaults to "config.cfg".
+            base_config_file_name (str, optional): _description_. Defaults to "base_config.cfg"
+            config_file_name (str, optional): _description_. Defaults to "config.cfg"
+            config_dir (str, optional): _description_. Defaults to config folder in pkg
         """
-        self.config_file_name = config_file_name
+        self.config_file_name, self.config_dir = config_file_name, config_dir 
         if self.verbose: 
             print(f"Using {base_config_file_name} as base template.")
 
-        cmd_init = 'python -m spacy init fill-config {}/{} {}/{}'.format(glob.UC_DATA_DIR, base_config_file_name, glob.UC_DATA_DIR, self.config_file_name)
+        cmd_init = 'python -m spacy init fill-config {}/{} {}/{}'.format(self.config_dir, base_config_file_name, self.config_dir, self.config_file_name)
+        
         process = subprocess.Popen(cmd_init.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout_cmd, _ = process.communicate()
         if self.verbose : 
