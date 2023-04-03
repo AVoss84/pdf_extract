@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
 from tqdm import tqdm
 #import configparser
-from hr_analytics.config import global_config as glob
+from pdf_extract.config import global_config as glob
 #from imp import reload
 
 
