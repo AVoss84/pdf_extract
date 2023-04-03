@@ -4,8 +4,8 @@ from pathlib import Path
 #-------------------------------
 # Which environment to use?
 #-------------------------------
-#using = 'vm'                   # own virtual machine
-using = "sagemaker"            
+using = 'vm'                   # own virtual machine
+#using = "sagemaker"            
 #using = 'docker'                # Docker container
 
 ## Check if required environment variables exist
